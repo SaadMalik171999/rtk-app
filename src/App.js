@@ -1,24 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
-
+import { useDispatch } from "react-redux";
+import "./App.css";
+import { setPokemon } from "./features/pokemonSlice";
+import { useGetPokemonByNameQuery } from "./services/pokemon";
+import PokemonComponent from "./PokemonComponent";
 function App() {
+  
+  const { data, error, isLoading } = useGetPokemonByNameQuery("bulbasaur");
+
+  const dispatch = useDispatch();
+
+  dispatch(setPokemon(data));
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div className="App">
+        {error ? (
+          <>Oh no, there was an error</>
+        ) : isLoading ? (
+          <>Loading...</>
+        ) : data ? (
+          <>
+            <h3>{data.species.name}</h3>
+            <img src={data.sprites.front_shiny} alt={data.species.name} />
+            <PokemonComponent />
+          </>
+        ) : null}
+      </div>
+    </>
   );
 }
 
